@@ -1,15 +1,49 @@
 const http = require("http");
 const path = require("path");
-const url = require ("url");
+const url = require("url");
+const fs = require("fs");
+const pageHead = '<!DOCTYPE html>\n<html>\n<head>\n\t<meta charset="utf-8">\n\t<title>Gertrud Roos, veebiprogrammeerimine 2023</title>\n</head>\n<body>';
+const pageBanner = '\n\t<img src="banner.png" alt="Lehe bänner">\n';
+const pageBody = '\n\t<h1>Gertrud Roos</h1>\n\t<p>See leht on loodud <a href="https://www.tlu.ee" target="_blank">TLÜ</a> Digitehnoloogiate instituudis õppetöö raames!</p>\n\t<p>Olen väga tore!</p>\n\t<p>21 aastane tudeng.</p>\n\t<hr>\n\t<p>Kursus, mille raames leht tehti on: veebiprogrammeerimine.</p>';
+const pageFoot = '\n</body>\n</html>';
 
 http.createServer(function(req, res){
-    console.log(url.parse(req.url, true))
-    //määrame tagastavate andmete päise, et on veebileht 
-    res.writeHead(200, {"Content-Type": "text/html"});
-    res.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Gertrud, veebiprogrammeerimine 2023</title><script>console.log("See töötab!");</script></head><body>');
-    res.write('<h1>Gertrud</h1><p>See leht on loodud <a href="https://www.tlu.ee/" target="_blank"/> TLÜ </a> Digitehnolooiate instituudis Õppetöö raames</p><hr><p>Olen Gertrud Roos</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p><p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p></body></html>');
-    //et see kõik valmiks ja ära saadetaks
-
-    res.write('\n\t<img src="./public/banner/banner.png" alt="Lehe banner">\n');
-    return res.end();
+	console.log(url.parse(req.url, true));
+	let currentURL = url.parse(req.url, true);
+	if(currentURL.pathname === "/"){
+		//määrame tagastatavate andmete päise, et on veebileht
+		res.writeHead(200, {"Content-Type": "text/html"});
+		res.write(pageHead);
+		res.write(pageBanner);
+		res.write(pageBody);
+		res.write('<p><a href="addName">Lisame nime</a>!</p>');
+		res.write(pageFoot);
+		//et see kõik valmiks ja ära saadetaks
+		return res.end();
+	}
+	else if (currentURL.pathname === "/addName"){ 
+		res.writeHead(200, {"Content-Type": "text/html"});
+		res.write(pageHead);
+		res.write(pageBanner);
+		res.write(pageBody);
+		res.write('<h2>Palun lisa oma nimi</h2>');
+		res.write(pageFoot);
+		//et see kõik valmiks ja ära saadetaks
+		return res.end();
+	}
+	else if (currentURL.pathname === "/banner.png"){
+		console.log("tahan pilti!");
+		let filePath = path.join(__dirname, "public", "banner/banner.png");
+		fs.readFile(filePath, (err, data)=>{
+			if(err){
+				throw err;
+			}
+			else {
+				res.writeHead(200, {"Content-Type": "image/png"});
+				res.end(data);
+			}
+		});
+	} 
 }).listen(5216);
+
+
