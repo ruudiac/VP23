@@ -3,7 +3,8 @@ const path = require("path");
 const url = require("url");
 const fs = require("fs");
 const dateInfo = require("./dateTime_et");
-const { parse } = require('querystring');
+const dateInfoEN = require("./dateInfo_en");
+const querystring = require('querystring');
 const pageHead = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Gertrud Roos, veebiprogrammeerimine 2023</title><script src ="first.js"defer></script></head><body>'
 const pageBanner = '\n\t<img src="/banner.png" alt="lehe bänner">\n'
 const pageBody = '<img src= "../~rinde/media/pics/banner/vp_banner_2023.png"_alt="veebiprogrammeerimine kursuse banner"><h1>Gertrud Roos</h1><p>See leht on loodud <a href="https://www.tlu.ee" target="_blank">TLÜ</a> Digitehnoloogiate instituudis õppetöö raames! Ma lisasin siia asjuuu!</p><hr><p>Kursus, mille raames leht tehti on: veebiprogrammeerimine.'
@@ -17,10 +18,10 @@ const semesterLastedFor = Math.floor((today.getTime() - semesterBegin.getTime())
 
 http.createServer(function(req, res){
 	if (req.method === 'POST'){
-	//collectRequestData(req, result =>{
-		//res.write(result);
-		//res.end();
-		//});
+	collectRequestData(req, result =>{
+		res.write(result);
+		res.end();
+		});
 		//Avan tekstifaili kirjutamiseks
 		fs.open('public/log.txt', 'a',(err, file)=>{
 			if (err){
@@ -164,13 +165,14 @@ function collectRequestData(request, callback) {
             receivedData += chunk.toString();
         });
         request.on('end', () => {
-            callback(parse(receivedData));
+            callback(querystring.decode(receivedData));
         });
     }
     else {
         callback(null);
     }
 }
+
 //5200 rinde
 
 //5216 mina
